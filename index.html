@@ -391,10 +391,18 @@
             const file = e.target.files[0];
             if (!file) return;
 
+            // Vercel payload limit is 4.5MB (base64 adds 33% overhead)
+            const MAX_SIZE = 3 * 1024 * 1024; // 3MB
+            if (file.size > MAX_SIZE) {
+                alert(`FILE TOO LARGE: ${file.name} is ${(file.size / (1024 * 1024)).toFixed(2)}MB. Max limit is 3MB for serverless processing.`);
+                fileInput.value = '';
+                return;
+            }
+
             mimeType = file.type;
             const reader = new FileReader();
 
-            log(`LOADING DATA: ${file.name}`);
+            log(`LOADING DATA: ${file.name} (${(file.size / (1024 * 1024)).toFixed(2)}MB)`);
             reader.onload = (event) => {
                 videoBase64 = event.target.result.split(',')[1];
                 vlogPlayer.src = URL.createObjectURL(file);
@@ -413,7 +421,7 @@
             loadingOverlay.classList.remove('hidden');
             analyzeBtn.disabled = true;
             scanLine.style.display = 'block';
-            log("INJECTING FORENSIC PROBES...", 'var(--accent-blue)');
+            log("INJECTING FORENSIC PROBES (DATA PAYLOAD: ~4MB)...", 'var(--accent-blue)');
 
             try {
                 const response = await fetch('/api/generate', {
@@ -424,6 +432,19 @@
                         mimeType: mimeType
                     })
                 });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    if (errorText.includes("Request Entity Too Large") || response.status === 413) {
+                        throw new Error("VIDEO TOO LARGE: Payload exceeded Vercel's 4.5MB limit. Please upload a smaller or shorter clip.");
+                    }
+                    try {
+                        const errorData = JSON.parse(errorText);
+                        throw new Error(errorData.error || "Server error");
+                    } catch (e) {
+                        throw new Error(`Server Error (${response.status}): ${errorText.substring(0, 50)}...`);
+                    }
+                }
 
                 const data = await response.json();
                 if (data.error) throw new Error(data.error);
