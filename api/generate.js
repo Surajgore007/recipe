@@ -36,9 +36,13 @@ export default async function handler(req, res) {
         }
 
         const data = await response.json();
-        const text = data.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim();
+        const text = data.candidates[0].content.parts[0].text;
 
-        res.status(200).json(JSON.parse(text));
+        // Extract JSON from markdown or raw text
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) throw new Error("AI failed to return valid JSON metadata.");
+
+        res.status(200).json(JSON.parse(jsonMatch[0]));
 
     } catch (error) {
         console.error('Backend Error:', error);

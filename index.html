@@ -329,15 +329,28 @@
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                     startVisualizer(stream);
 
-                    mediaRecorder = new MediaRecorder(stream);
+                    // Detect supported mime type
+                    const supportedType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg';
+                    mediaRecorder = new MediaRecorder(stream, { mimeType: supportedType });
                     audioChunks = [];
 
-                    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                    mediaRecorder.ondataavailable = e => {
+                        if (e.data.size > 0) audioChunks.push(e.data);
+                    };
                     mediaRecorder.onstop = processAudio;
 
                     mediaRecorder.start();
                     recordBtn.classList.add('recording');
                     statusText.textContent = 'RECORDING RAW...';
+
+                    // Auto-stop after 5 seconds to prevent large payload hangs
+                    setTimeout(() => {
+                        if (mediaRecorder.state === 'recording') {
+                            mediaRecorder.stop();
+                            recordBtn.classList.remove('recording');
+                        }
+                    }, 5000);
+
                 } catch (err) {
                     alert('Mic access denied: ' + err.message);
                 }
@@ -345,20 +358,34 @@
         });
 
         async function processAudio() {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-            const arrayBuffer = await audioBlob.arrayBuffer();
-            mainVocalBuffer = await audioContext.decodeAudioData(arrayBuffer);
+            console.log("Audio recording stopped. Processing chunks:", audioChunks.length);
+            if (audioChunks.length === 0) return alert("No audio recorded!");
 
-            // Convert to Base64 for Gemini
-            const reader = new FileReader();
-            reader.readAsDataURL(audioBlob);
-            reader.onloadend = async () => {
-                const base64Audio = reader.result.split(',')[1];
-                await generateHarmonies(base64Audio);
-            };
+            const mimeType = mediaRecorder.mimeType;
+            const audioBlob = new Blob(audioChunks, { type: mimeType });
+
+            console.log("Captured MIME:", mimeType, "Size:", audioBlob.size);
+
+            try {
+                const arrayBuffer = await audioBlob.arrayBuffer();
+                mainVocalBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+                // Convert to Base64 for Gemini
+                const reader = new FileReader();
+                reader.readAsDataURL(audioBlob);
+                reader.onloadend = async () => {
+                    const base64Audio = reader.result.split(',')[1];
+                    console.log("Sending to AI analysis...");
+                    await generateHarmonies(base64Audio, mimeType);
+                };
+            } catch (e) {
+                console.error("Audio Decode Error:", e);
+                alert("Could not process audio format. Try a shorter recording.");
+                statusText.textContent = 'STUDIO IDLE';
+            }
         }
 
-        async function generateHarmonies(base64Audio) {
+        async function generateHarmonies(base64Audio, mimeType) {
             loadingOverlay.classList.remove('hidden');
             try {
                 const response = await fetch('/api/generate', {
@@ -366,9 +393,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         audioData: base64Audio,
-                        mimeType: 'audio/wav'
+                        mimeType: mimeType
                     })
                 });
+
+                console.log("AI Response Status:", response.status);
 
                 const data = await response.json();
                 if (data.error) throw new Error(data.error);
