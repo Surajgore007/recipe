@@ -3,8 +3,9 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    const { methodology, dataset, dataType } = req.body;
+    const { methodology, dataset, dataType, model } = req.body;
     const API_KEY = process.env.GEMINI_KEY;
+    const modelId = model || 'gemini-2.0-flash';
 
     if (!API_KEY) {
         return res.status(500).json({ error: 'Server configuration error: Missing API Key' });
@@ -39,7 +40,7 @@ Return ONLY a JSON object:
     "summary": "High-level reproduction summary"
 }`;
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${API_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

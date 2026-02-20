@@ -313,10 +313,20 @@
             </div>
         </div>
 
+        <div class="input-group">
+            <div class="section-title">Step 3: AI Model Selection</div>
+            <select id="modelSelect"
+                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: #fff; font-family: inherit;">
+                <option value="gemini-2.0-flash">Gemini 2.0 Flash (Fastest/Multimodal)</option>
+                <option value="gemini-1.5-flash">Gemini 1.5 Flash (Stable/High Quota)</option>
+                <option value="gemini-1.5-pro">Gemini 1.5 Pro (Extreme Reasoning)</option>
+            </select>
+        </div>
+
         <button class="btn-primary" id="replicateBtn" disabled>START REPLICATION CROSS-EXAM</button>
 
-        <div style="margin-top: auto; font-size: 0.65rem; color: #70757a; text-align: center;">
-            Engine: Gemini 1.5 Flash • Mode: Autonomous Peer Review
+        <div id="footerEngine" style="margin-top: auto; font-size: 0.65rem; color: #70757a; text-align: center;">
+            Engine: Gemini 2.0 Flash • Mode: Autonomous Peer Review
         </div>
     </div>
 
@@ -361,10 +371,11 @@
     </div>
 
     <script>
-        const fileInput = document.getElementById('fileInput');
         const methodText = document.getElementById('methodText');
         const replicateBtn = document.getElementById('replicateBtn');
         const fileInfo = document.getElementById('fileInfo');
+        const modelSelect = document.getElementById('modelSelect');
+        const footerEngine = document.getElementById('footerEngine');
         const loadingOverlay = document.getElementById('loadingOverlay');
         const placeholder = document.getElementById('placeholder');
         const results = document.getElementById('results');
@@ -378,6 +389,10 @@
 
         let datasetContent = "";
         let datasetType = "";
+
+        modelSelect.addEventListener('change', () => {
+            footerEngine.textContent = `Engine: ${modelSelect.options[modelSelect.selectedIndex].text.split(' (')[0]} • Mode: Autonomous Peer Review`;
+        });
 
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -415,7 +430,8 @@
                     body: JSON.stringify({
                         methodology: methodText.value.trim(),
                         dataset: datasetContent,
-                        dataType: datasetType
+                        dataType: datasetType,
+                        model: modelSelect.value
                     })
                 });
 
