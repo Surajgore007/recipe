@@ -4,416 +4,459 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Cyber-Threat Intelligence Portal</title>
+    <title>AuraVocal | AI Vocal Harmonizer</title>
     <style>
         :root {
-            --bg-color: #050505;
-            --text-color: #00ff41;
-            --accent-color: #008f11;
-            --warning-color: #ffcc00;
-            --danger-color: #ff3e3e;
-            --card-bg: rgba(20, 20, 20, 0.8);
-            --border-color: #00ff4155;
-            --glow: 0 0 10px rgba(0, 255, 65, 0.3);
+            --bg-color: #0a0b1e;
+            --accent-primary: #7000ff;
+            --accent-secondary: #00d4ff;
+            --text-main: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: var(--bg-color);
-            background-image:
-                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            color: var(--text-color);
             margin: 0;
-            padding: 20px;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-color);
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.15) 0%, transparent 40%);
+            color: var(--text-main);
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        h1 {
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 10px;
-            margin-bottom: 30px;
-            text-shadow: var(--glow);
-            font-size: 1.8rem;
-            text-align: center;
-        }
-
-        .container {
+        .studio-header {
             width: 100%;
-            max-width: 1200px;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            box-sizing: border-box;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent-secondary);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .main-stage {
+            flex: 1;
+            width: 100%;
+            max-width: 1000px;
+            padding: 40px 20px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 30px;
         }
 
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            background: rgba(0, 255, 65, 0.05);
-            padding: 10px;
-            border: 1px solid var(--border-color);
-        }
-
-        input {
-            flex-grow: 1;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid var(--accent-color);
-            color: var(--text-color);
-            padding: 10px;
-            font-family: inherit;
-            font-size: 1.1rem;
-            outline: none;
-        }
-
-        button {
-            background: var(--accent-color);
-            color: #000;
-            border: none;
-            padding: 10px 25px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-family: inherit;
-            transition: all 0.2s ease;
-        }
-
-        button:hover {
-            background: var(--text-color);
-            box-shadow: 0 0 20px var(--text-color);
-        }
-
-        button:disabled {
-            background: #222;
-            color: #444;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            opacity: 0;
-            transition: opacity 0.8s ease;
-        }
-
-        .dashboard.visible {
-            opacity: 1;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 20px;
+        /* Visualizer */
+        .visualizer-container {
+            width: 100%;
+            height: 200px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(5px);
         }
 
-        .card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
+        canvas {
             width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--text-color), transparent);
-            animation: scanning 3s linear infinite;
+            height: 100%;
         }
 
-        @keyframes scanning {
+        /* Essential Controls */
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 24px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .card h2 {
+            margin: 0 0 16px 0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .record-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: none;
+            background: #ff3e3e;
+            box-shadow: 0 0 30px rgba(255, 62, 62, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .record-btn.recording {
+            border-radius: 12px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
             0% {
-                top: -2px;
+                transform: scale(1);
+                box-shadow: 0 0 30px rgba(255, 62, 62, 0.3);
+            }
+
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 50px rgba(255, 62, 62, 0.5);
             }
 
             100% {
-                top: 100%;
+                transform: scale(1);
+                box-shadow: 0 0 30px rgba(255, 62, 62, 0.3);
             }
         }
 
-        .full-width {
-            grid-column: 1 / -1;
+        .knob-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
 
-        h2 {
-            margin-top: 0;
-            font-size: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 8px;
-            color: #fff;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+        .param {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .threat-item {
-            border-bottom: 1px solid rgba(0, 255, 65, 0.1);
-            padding: 12px 0;
+        .param label {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-primary);
+        }
+
+        .harmony-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .harmony-track {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .threat-item:last-child {
-            border-bottom: none;
-        }
-
-        .badge {
-            padding: 2px 6px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            color: #000;
-            text-transform: uppercase;
-        }
-
-        .badge.high {
-            background: var(--danger-color);
-            box-shadow: 0 0 10px var(--danger-color);
-        }
-
-        .badge.medium {
-            background: var(--warning-color);
-            box-shadow: 0 0 10px var(--warning-color);
-        }
-
-        .badge.low {
-            background: var(--accent-color);
-            box-shadow: 0 0 10px var(--accent-color);
-        }
-
-        .chart-container {
+        .track-info {
             display: flex;
-            align-items: flex-end;
-            height: 180px;
-            gap: 15px;
-            padding-top: 10px;
+            flex-direction: column;
         }
 
-        .bar-wrap {
-            flex: 1;
+        .track-info span:first-child {
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .track-info span:last-child {
+            font-size: 0.7rem;
+            opacity: 0.6;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 11, 30, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 100;
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 100%;
-            justify-content: flex-end;
+            justify-content: center;
+            gap: 20px;
         }
 
-        .bar {
-            width: 100%;
-            background: var(--accent-color);
-            transition: height 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-            position: relative;
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(112, 0, 255, 0.1);
+            border-top: 3px solid var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
-        .bar-label {
-            font-size: 0.7rem;
-            margin-top: 8px;
-            color: #aaa;
-        }
-
-        #threatImage {
-            width: 100%;
-            height: auto;
-            border: 1px solid var(--border-color);
-            filter: brightness(0.8) contrast(1.2) sepia(1) hue-rotate(80deg);
-            opacity: 0.8;
-        }
-
-        #terminal-output {
-            font-size: 0.8rem;
-            color: var(--text-color);
-            height: 120px;
-            overflow-y: auto;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            margin-top: 10px;
-            scrollbar-width: thin;
-        }
-
-        .blink {
-            animation: blink 1s steps(2, start) infinite;
-        }
-
-        @keyframes blink {
+        @keyframes spin {
             to {
-                visibility: hidden;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .dashboard {
-                grid-template-columns: 1fr;
+                transform: rotate(360deg);
             }
         }
     </style>
 </head>
 
 <body>
-    <h1>AI Cyber-Threat Intelligence <span class="blink">_</span></h1>
+    <header class="studio-header">
+        <div class="logo">AURAVOCAL AI</div>
+        <div class="status-badge" id="statusText">STUDIO IDLE</div>
+    </header>
 
-    <div class="container">
-        <div class="input-group">
-            <input type="text" id="targetInput"
-                placeholder="ENTER TARGET SECTOR (e.g., FINTECH, CRITICAL INFRASTRUCTURE)">
-            <button id="scanBtn">INITIATE SCAN</button>
+    <div class="main-stage">
+        <!-- Visualizer -->
+        <div class="visualizer-container">
+            <canvas id="visualizer"></canvas>
+            <div id="aiAnalysis"
+                style="position:absolute; bottom:20px; left:20px; font-size:0.8rem; color:var(--accent-secondary); font-weight:bold;">
+            </div>
         </div>
 
-        <div id="terminal-output" class="full-width card hidden"></div>
+        <div class="control-panel">
+            <!-- Recorder Card -->
+            <div class="card" style="text-align: center;">
+                <h2>Vocal Input</h2>
+                <p id="instruction" style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 20px;">Record raw vocals
+                    (sync will be generated automatically)</p>
+                <button class="record-btn" id="recordBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
+                        <path
+                            d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+                    </svg>
+                </button>
+            </div>
 
-        <div id="dashboard" class="dashboard hidden">
-            <!-- Threat Stats Chart -->
+            <!-- Effects Card -->
             <div class="card">
-                <h2>THREAT SEVERITY DISTRIBUTION</h2>
-                <div class="chart-container" id="severityChart">
-                    <!-- Bars inserted by JS -->
+                <h2>Studio Effects</h2>
+                <div class="knob-grid">
+                    <div class="param">
+                        <label>Reverb Size</label>
+                        <input type="range" min="0" max="100" value="40" id="reverbRange">
+                    </div>
+                    <div class="param">
+                        <label>Harmony Mix</label>
+                        <input type="range" min="0" max="100" value="70" id="mixRange">
+                    </div>
                 </div>
             </div>
 
-            <!-- Threat Actor Visual -->
-            <div class="card">
-                <h2>SUSPECTED THREAT ACTOR</h2>
-                <img id="threatImage" src="" alt="Threat Actor Visualization">
-            </div>
-
-            <!-- Threat List -->
+            <!-- Harmony Stack -->
             <div class="card full-width">
-                <h2>DETECTED THREATS</h2>
-                <div id="threatList"></div>
+                <h2>AI Generated Harmonies</h2>
+                <div class="harmony-stack" id="harmonyStack">
+                    <div style="opacity:0.3; text-align:center; padding:20px;">Record to generate studio layers...</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script>
-        const scanBtn = document.getElementById('scanBtn');
-        const targetInput = document.getElementById('targetInput');
-        const terminalOutput = document.getElementById('terminal-output');
-        const dashboard = document.getElementById('dashboard');
-        const threatList = document.getElementById('threatList');
-        const severityChart = document.getElementById('severityChart');
-        const threatImage = document.getElementById('threatImage');
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <div id="loadingText">Analyzing Vocal Patterns...</div>
+    </div>
 
-        function log(message) {
-            const line = document.createElement('div');
-            line.textContent = `> ${new Date().toLocaleTimeString()} : ${message}`;
-            terminalOutput.appendChild(line);
-            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    <script>
+        // --- AUDIO ENGINE ---
+        let audioContext;
+        let mainVocalBuffer;
+        let mediaRecorder;
+        let audioChunks = [];
+        let analyzer;
+        let animationId;
+
+        const recordBtn = document.getElementById('recordBtn');
+        const statusText = document.getElementById('statusText');
+        const harmonyStack = document.getElementById('harmonyStack');
+        const aiAnalysis = document.getElementById('aiAnalysis');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        async function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
         }
 
-        scanBtn.addEventListener('click', async () => {
-            const target = targetInput.value.trim();
-            if (!target) return alert("TARGET REQUIRED");
+        recordBtn.addEventListener('click', async () => {
+            await initAudio();
 
-            // Reset UI
-            scanBtn.disabled = true;
-            terminalOutput.classList.remove('hidden');
-            terminalOutput.innerHTML = '';
-            dashboard.classList.remove('visible');
-            dashboard.classList.add('hidden');
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                recordBtn.classList.remove('recording');
+                statusText.textContent = 'PROCESSING...';
+            } else {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    startVisualizer(stream);
 
-            log(`INITIALIZING SCAN FOR: ${target.toUpperCase()}`);
-            log("ESTABLISHING TOR TERMINATION NODES...");
-            await new Promise(r => setTimeout(r, 800));
-            log("SCRAPING DARK WEB MARKETPLACES...");
-            await new Promise(r => setTimeout(r, 800));
-            log("ANALYZING FORUM CHATTER...");
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
 
-            try {
-                // Call the Vercel Serverless Backend
-                const response = await fetch('/api/generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ target })
-                });
+                    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                    mediaRecorder.onstop = processAudio;
 
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    throw new Error(errorData.error || `Server Error: ${response.status}`);
+                    mediaRecorder.start();
+                    recordBtn.classList.add('recording');
+                    statusText.textContent = 'RECORDING RAW...';
+                } catch (err) {
+                    alert('Mic access denied: ' + err.message);
                 }
-
-                const report = await response.json();
-
-                log("DATA ACQUIRED. DECRYPTING...");
-                await new Promise(r => setTimeout(r, 500));
-
-                // 2. Pollinations Image
-                const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(report.actor_visual_prompt + " minimal glitch art red green black")}`;
-                threatImage.src = imageUrl;
-
-                // 3. Render Dashboard
-                renderThreats(report.threats);
-                renderChart(report.threats);
-
-                dashboard.classList.remove('hidden');
-                // Force layout recalc for transition
-                setTimeout(() => dashboard.classList.add('visible'), 50);
-                log("VISUALIZATION COMPLETE.");
-
-            } catch (error) {
-                console.error(error);
-                log(`FATAL ERROR: ${error.message}`);
-                alert(`SYSTEM FAILURE: ${error.message}`);
-            } finally {
-                scanBtn.disabled = false;
             }
         });
 
-        function renderThreats(threats) {
-            threatList.innerHTML = '';
-            threats.forEach(t => {
-                const item = document.createElement('div');
-                item.className = 'threat-item';
-                item.innerHTML = `
-                    <div>
-                        <strong style="color:#fff">${t.type}</strong><br>
-                        <small>${t.description}</small>
+        async function processAudio() {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const arrayBuffer = await audioBlob.arrayBuffer();
+            mainVocalBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+            // Convert to Base64 for Gemini
+            const reader = new FileReader();
+            reader.readAsDataURL(audioBlob);
+            reader.onloadend = async () => {
+                const base64Audio = reader.result.split(',')[1];
+                await generateHarmonies(base64Audio);
+            };
+        }
+
+        async function generateHarmonies(base64Audio) {
+            loadingOverlay.classList.remove('hidden');
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        audioData: base64Audio,
+                        mimeType: 'audio/wav'
+                    })
+                });
+
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+
+                aiAnalysis.textContent = `DETECTED: ${data.key} | ${data.note} | ${data.bpm} BPM`;
+                renderHarmonyStack(data.intervals);
+                playFullStack(data.intervals);
+                statusText.textContent = 'READY';
+
+            } catch (err) {
+                alert('Harmony Error: ' + err.message);
+                statusText.textContent = 'STUDIO IDLE';
+            } finally {
+                loadingOverlay.classList.add('hidden');
+            }
+        }
+
+        function renderHarmonyStack(intervals) {
+            harmonyStack.innerHTML = '';
+            const labels = ['High Harmony', 'Low Harmony', 'Sub Layer'];
+            intervals.forEach((interval, i) => {
+                const track = document.createElement('div');
+                track.className = 'harmony-track';
+                track.innerHTML = `
+                    <div class="track-info">
+                        <span>${labels[i] || 'AI Layer ' + (i + 1)}</span>
+                        <span>Shift: ${interval > 0 ? '+' : ''}${interval} Semitones</span>
                     </div>
-                    <div style="text-align:right">
-                        <span class="badge ${t.severity.toLowerCase()}">${t.severity.toUpperCase()}</span><br>
-                        <small>${t.date}</small>
-                    </div>
+                    <div style="color:var(--accent-secondary); font-size:0.8rem;">● ACTIVE</div>
                 `;
-                threatList.appendChild(item);
+                harmonyStack.appendChild(track);
             });
         }
 
-        function renderChart(threats) {
-            severityChart.innerHTML = '';
-            const counts = { High: 0, Medium: 0, Low: 0 };
-            threats.forEach(t => {
-                const sev = t.severity.charAt(0).toUpperCase() + t.severity.slice(1).toLowerCase();
-                if (counts[sev] !== undefined) counts[sev]++;
+        function playFullStack(intervals) {
+            // Play original
+            playBuffer(mainVocalBuffer, 0, 1.0);
+
+            // Play harmonies with pitch shift (browser-side semi-tone shift via detune)
+            intervals.forEach(interval => {
+                playBuffer(mainVocalBuffer, interval, 0.7);
             });
-            const max = Math.max(...Object.values(counts));
+        }
 
-            Object.entries(counts).forEach(([level, count]) => {
-                const wrap = document.createElement('div');
-                wrap.className = 'bar-wrap';
+        function playBuffer(buffer, semitones, volume) {
+            const source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            source.detune.value = semitones * 100; // 100 cents = 1 semitone
 
-                const bar = document.createElement('div');
-                bar.className = 'bar';
-                if (level === 'High') bar.style.backgroundColor = 'var(--danger-color)';
-                else if (level === 'Medium') bar.style.backgroundColor = 'var(--warning-color)';
+            const gain = audioContext.createGain();
+            gain.gain.value = volume;
 
-                const height = max > 0 ? (count / max) * 100 : 0;
-                bar.style.height = `${height}%`;
+            source.connect(gain);
+            gain.connect(audioContext.destination);
+            source.start(0);
+        }
 
-                const label = document.createElement('div');
-                label.className = 'bar-label';
-                label.textContent = `${level} (${count})`;
+        // --- VISUALIZER ---
+        function startVisualizer(stream) {
+            if (animationId) cancelAnimationFrame(animationId);
+            const source = audioContext.createMediaStreamSource(stream);
+            analyzer = audioContext.createAnalyser();
+            source.connect(analyzer);
 
-                wrap.appendChild(bar);
-                wrap.appendChild(label);
-                severityChart.appendChild(wrap);
-            });
+            const canvas = document.getElementById('visualizer');
+            const ctx = canvas.getContext('2d');
+
+            function draw() {
+                animationId = requestAnimationFrame(draw);
+                const bufferLength = analyzer.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                analyzer.getByteFrequencyData(dataArray);
+
+                ctx.fillStyle = '#0a0b1e';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                const barWidth = (canvas.width / bufferLength) * 2.5;
+                let barHeight;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    barHeight = dataArray[i] / 2;
+                    ctx.fillStyle = `rgba(112, 0, 255, ${barHeight / 150})`;
+                    ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                    x += barWidth + 1;
+                }
+            }
+            draw();
         }
     </script>
 </body>

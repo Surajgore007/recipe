@@ -1,30 +1,28 @@
-# AI Cyber-Threat Intelligence Portal
+# AuraVocal AI | Studio-Quality Vocal Harmonizer
 
-An emerging security threat visualization dashboard that simulates dark web scraping using AI.
+AuraVocal is an AI-powered music generation tool that transforms a single raw vocal track into a rich, three-part studio harmony in real-time.
 
-## 🚀 Features
-- **Simulated Dark Web Scanning**: Uses Gemini 2.5 Flash to generate realistic, industry-specific threat intelligence.
-- **Interactive Dashboard**: Visualizes threat severity distribution and specific attack vectors.
-- **AI Imagery**: Real-time generation of suspected threat actor visuals via Pollinations AI.
-- **Secure Architecture**: API Key is hidden in a Vercel Serverless Backend, never exposed to the client.
+## 🎤 Key Features
+- **AI Audio Analysis**: Uses Gemini 2.0 Flash to detect the exact key, pitch, and rhythmic nuances of your voice.
+- **Instant Harmonization**: Automatically generates three-part harmonies (+3rd, +5th, -Octave) perfectly synced to your original vocal.
+- **Web Audio Engine**: High-fidelity pitch-shifting and effects processing directly in the browser.
+- **Studio UI**: Modern glassmorphism interface with a real-time frequency spectrum visualizer.
 
-## 🛠️ Architecture
-- **Frontend**: Single-page `index.html` (Vanilla JS, CSS Grid).
-- **Backend**: Vercel Serverless Function (`/api/generate.js`).
-- **AI Core**: Google Gemini 2.5 Flash API (invoked via backend).
-- **Visualization**: Pollinations AI (Image Generation).
+## 🛠️ Tech Stack
+- **Frontend**: Vanilla HTML5, CSS3, JavaScript (Web Audio API, MediaRecorder, Canvas).
+- **Backend (Vercel)**: Serverless function using Gemini 2.0 Flash for multimodal audio analysis.
+- **Security**: Environment variable `GEMINI_KEY` ensures no keys are leaked.
 
-## 📋 Vercel Deployment Instructions
-To deploy this project to Vercel and keep your API Key secure:
+## 📋 Getting Started
+1. **Setup Environment**:
+   Ensure `GEMINI_KEY` is set in your Vercel project environment variables.
+2. **Launch Studio**:
+   Open `index.html` in a browser that supports `AudioContext` and `MediaRecorder` (Chrome, Edge, Firefox).
+3. **Record**:
+   Click the **Red Record Button**, sing a raw vocal line, and click it again to stop.
+4. **Experience the Magic**:
+   AuraVocal will analyze your voice and play back your studio-ready harmony stack.
 
-1. **Connect to GitHub**: Push this repository to your GitHub account.
-2. **Deploy to Vercel**: Import the project into Vercel.
-3. **Configure Environment Variables**:
-   - Go to **Project Settings** > **Environment Variables**.
-   - Add a new variable:
-     - **Key**: `GEMINI_KEY`
-     - **Value**: `Your-Gemini-API-Key-Here`
-4. **Access**: Once deployed, the portal will use the secure key from your Vercel settings.
-
-## 🛑 Disclaimer
-This portal generates **simulated** data for educational and hackathon purposes. It does not perform actual network scraping or illegal activities.
+## 🛑 Requirements
+- Modern browser with Microphone access.
+- Vercel hosting (or local Vercel CLI) for the `/api/generate.js` backend.
