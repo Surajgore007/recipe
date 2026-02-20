@@ -46,8 +46,8 @@ export default async function handler(req, res) {
     Return ONLY JSON.`;
 
     try {
-        // Use Gemini 1.5 Flash for stable free-tier quota
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+        // Use Gemini 2.0 Flash as requested by user
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
