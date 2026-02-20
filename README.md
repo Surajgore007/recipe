@@ -1,28 +1,27 @@
-# AuraVocal AI | Studio-Quality Vocal Harmonizer
+# DeepScan AI | Video Deepfake Forensic Tool
 
-AuraVocal is an AI-powered music generation tool that transforms a single raw vocal track into a rich, three-part studio harmony in real-time.
+A professional-grade "Cyber-Forensics" platform designed to detect video manipulations and restore facial integrity.
 
-## 🎤 Key Features
-- **AI Audio Analysis**: Uses Gemini 2.0 Flash to detect the exact key, pitch, and rhythmic nuances of your voice.
-- **Instant Harmonization**: Automatically generates three-part harmonies (+3rd, +5th, -Octave) perfectly synced to your original vocal.
-- **Web Audio Engine**: High-fidelity pitch-shifting and effects processing directly in the browser.
-- **Studio UI**: Modern glassmorphism interface with a real-time frequency spectrum visualizer.
+## 🛡️ Core Capabilities
+- **Deep-Scan Forensics**: Leverages Gemini 2.0 Flash's multimodal video analysis to detect lighting inconsistencies, skin texture anomalies, and temporal jitters.
+- **Manipulation Meter**: Provides a real-time "Manipulation Probability" percentage and final verdict.
+- **Forensic Hotspots**: Identifies exact timestamps and descriptions of detected artifacts.
+- **Integrity Restoration**: Generates an AI-reconstructed preview of the target's original appearance via forensic description.
 
 ## 🛠️ Tech Stack
-- **Frontend**: Vanilla HTML5, CSS3, JavaScript (Web Audio API, MediaRecorder, Canvas).
-- **Backend (Vercel)**: Serverless function using Gemini 2.0 Flash for multimodal audio analysis.
-- **Security**: Environment variable `GEMINI_KEY` ensures no keys are leaked.
+- **Frontend**: Vanilla HTML5, CSS3 (IBM Plex Mono styling), ES6 JavaScript.
+- **Backend**: Vercel Serverless Function (`/api/generate.js`) invoking Gemini 2.0 Flash.
+- **Visualization**: Pollinations AI for forensic reconstruction previews.
 
-## 📋 Getting Started
-1. **Setup Environment**:
-   Ensure `GEMINI_KEY` is set in your Vercel project environment variables.
-2. **Launch Studio**:
-   Open `index.html` in a browser that supports `AudioContext` and `MediaRecorder` (Chrome, Edge, Firefox).
-3. **Record**:
-   Click the **Red Record Button**, sing a raw vocal line, and click it again to stop.
-4. **Experience the Magic**:
-   AuraVocal will analyze your voice and play back your studio-ready harmony stack.
+## 📋 Forensic Workflow
+1. **Load Core Data**: Select a video file (`.mp4`, `.webm`, etc.).
+2. **Initiate Scan**: Click "Start Forensic Scan".
+3. **Analyze Intel**:
+   - Watch the playback in the viewport.
+   - Review the **Manipulation Meter** for probability.
+   - Investigate the **Forensic Hotspots** list.
+   - Compare the original video with the **Restoration Preview**.
 
 ## 🛑 Requirements
-- Modern browser with Microphone access.
-- Vercel hosting (or local Vercel CLI) for the `/api/generate.js` backend.
+- **Vercel Hosting**: Required for the serverless backend.
+- **Environment Variable**: `GEMINI_KEY` must be configured in Vercel for Gemini 2.0 Flash access.

@@ -4,202 +4,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraVocal | AI Vocal Harmonizer</title>
+    <title>DeepScan AI | Video Fake Forensic Tool</title>
     <style>
         :root {
-            --bg-color: #0a0b1e;
-            --accent-primary: #7000ff;
-            --accent-secondary: #00d4ff;
-            --text-main: #ffffff;
-            --glass-bg: rgba(255, 255, 255, 0.05);
+            --bg-color: #05070a;
+            --accent-red: #ff3e3e;
+            --accent-green: #00ff41;
+            --accent-blue: #00d4ff;
+            --text-main: #e0e0e0;
+            --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         body {
             margin: 0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'IBM Plex Mono', monospace, segment7;
             background: var(--bg-color);
             background-image:
-                radial-gradient(circle at 20% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.15) 0%, transparent 40%);
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+            background-size: 100% 4px, 4px 100%;
             color: var(--text-main);
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        .studio-header {
+        .forensic-header {
             width: 100%;
-            padding: 20px 40px;
+            padding: 15px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 2px solid var(--accent-red);
             box-sizing: border-box;
+            box-shadow: 0 0 20px rgba(255, 62, 62, 0.2);
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -1px;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--accent-red);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .status-badge {
+        .system-status {
             font-size: 0.8rem;
-            padding: 4px 12px;
-            border-radius: 20px;
-            background: rgba(0, 212, 255, 0.1);
-            color: var(--accent-secondary);
-            border: 1px solid rgba(0, 212, 255, 0.2);
+            color: var(--accent-green);
         }
 
-        .main-stage {
-            flex: 1;
+        .main-frame {
             width: 100%;
-            max-width: 1000px;
-            padding: 40px 20px;
+            max-width: 1200px;
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+            box-sizing: border-box;
+        }
+
+        .scanner-panel {
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 20px;
         }
 
-        /* Visualizer */
-        .visualizer-container {
+        .video-viewport {
             width: 100%;
-            height: 200px;
-            background: var(--glass-bg);
+            aspect-ratio: 16/9;
+            background: #000;
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        canvas {
+        video {
             width: 100%;
             height: 100%;
+            object-fit: contain;
         }
 
-        /* Essential Controls */
-        .control-panel {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        .scan-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            border: 2px solid transparent;
+            box-sizing: border-box;
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-red);
+            box-shadow: 0 0 15px var(--accent-red);
+            animation: scan 4s linear infinite;
+            display: none;
+        }
+
+        @keyframes scan {
+            0% {
+                top: 0%;
+            }
+
+            100% {
+                top: 100%;
+            }
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: transparent;
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+
+        .btn:hover:not(:disabled) {
+            background: var(--accent-red);
+            color: #000;
+            box-shadow: 0 0 15px var(--accent-red);
+        }
+
+        .btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .stats-panel {
+            display: flex;
+            flex-direction: column;
             gap: 20px;
         }
 
         .card {
-            background: var(--glass-bg);
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--glass-border);
-            padding: 24px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
+            padding: 20px;
+            position: relative;
         }
 
         .card h2 {
-            margin: 0 0 16px 0;
-            font-size: 0.9rem;
+            margin: 0 0 15px 0;
+            font-size: 0.8rem;
+            color: var(--accent-blue);
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: rgba(255, 255, 255, 0.5);
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 8px;
         }
 
-        .record-btn {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: none;
-            background: #ff3e3e;
-            box-shadow: 0 0 30px rgba(255, 62, 62, 0.3);
-            cursor: pointer;
+        .detect-meter {
+            height: 40px;
+            background: #111;
+            border: 1px solid var(--glass-border);
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .meter-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-red));
+            transition: width 1s ease;
+        }
+
+        .meter-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-shadow: 0 0 5px #000;
+        }
+
+        .hotspot-list {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .hotspot-item {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .restoration-view {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: #000;
+            border: 1px solid var(--glass-border);
+            margin-top: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background-size: cover;
+            background-position: center;
         }
 
-        .record-btn.recording {
-            border-radius: 12px;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 30px rgba(255, 62, 62, 0.3);
-            }
-
-            50% {
-                transform: scale(1.1);
-                box-shadow: 0 0 50px rgba(255, 62, 62, 0.5);
-            }
-
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 30px rgba(255, 62, 62, 0.3);
-            }
-        }
-
-        .knob-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .param {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .param label {
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            accent-color: var(--accent-primary);
-        }
-
-        .harmony-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .harmony-track {
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .track-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .track-info span:first-child {
-            font-weight: bold;
-            font-size: 0.85rem;
-        }
-
-        .track-info span:last-child {
+        #terminal {
             font-size: 0.7rem;
-            opacity: 0.6;
-        }
-
-        .hidden {
-            display: none;
+            color: var(--accent-green);
+            height: 100px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 10px;
+            border-top: 2px solid var(--accent-red);
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .loading-overlay {
@@ -208,9 +245,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 11, 30, 0.8);
+            background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(10px);
-            z-index: 100;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -218,275 +255,226 @@
             gap: 20px;
         }
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(112, 0, 255, 0.1);
-            border-top: 3px solid var(--accent-primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .glitch-text {
+            animation: glitch 1s linear infinite;
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
+        @keyframes glitch {
+
+            2%,
+            64% {
+                transform: translate(2px, 0) skew(0deg);
             }
+
+            4%,
+            60% {
+                transform: translate(-2px, 0) skew(0deg);
+            }
+
+            62% {
+                transform: translate(0, 0) skew(5deg);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #fileInput {
+            display: none;
         }
     </style>
 </head>
 
 <body>
-    <header class="studio-header">
-        <div class="logo">AURAVOCAL AI</div>
-        <div class="status-badge" id="statusText">STUDIO IDLE</div>
+    <header class="forensic-header">
+        <div class="logo">DeepScan Forensic Tool v2.0</div>
+        <div class="system-status" id="systemStatus">[ SYSTEM SECURE ]</div>
     </header>
 
-    <div class="main-stage">
-        <!-- Visualizer -->
-        <div class="visualizer-container">
-            <canvas id="visualizer"></canvas>
-            <div id="aiAnalysis"
-                style="position:absolute; bottom:20px; left:20px; font-size:0.8rem; color:var(--accent-secondary); font-weight:bold;">
-            </div>
-        </div>
-
-        <div class="control-panel">
-            <!-- Recorder Card -->
-            <div class="card" style="text-align: center;">
-                <h2>Vocal Input</h2>
-                <p id="instruction" style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 20px;">Record raw vocals
-                    (sync will be generated automatically)</p>
-                <button class="record-btn" id="recordBtn">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-                        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
-                        <path
-                            d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Effects Card -->
-            <div class="card">
-                <h2>Studio Effects</h2>
-                <div class="knob-grid">
-                    <div class="param">
-                        <label>Reverb Size</label>
-                        <input type="range" min="0" max="100" value="40" id="reverbRange">
-                    </div>
-                    <div class="param">
-                        <label>Harmony Mix</label>
-                        <input type="range" min="0" max="100" value="70" id="mixRange">
-                    </div>
+    <div class="main-frame">
+        <!-- Main Analysis Engine -->
+        <div class="scanner-panel">
+            <div class="video-viewport">
+                <video id="vlogPlayer" controls></video>
+                <div class="scan-overlay">
+                    <div class="scan-line" id="scanLine"></div>
+                </div>
+                <div id="uploadPrompt" style="position:absolute; text-align:center;">
+                    <p style="opacity:0.5;">DRAG VIDEO OR CLICK TO LOAD FORENSIC TARGET</p>
+                    <button class="btn" onclick="document.getElementById('fileInput').click()">LOAD CORE DATA</button>
+                    <input type="file" id="fileInput" accept="video/*">
                 </div>
             </div>
 
-            <!-- Harmony Stack -->
-            <div class="card full-width">
-                <h2>AI Generated Harmonies</h2>
-                <div class="harmony-stack" id="harmonyStack">
-                    <div style="opacity:0.3; text-align:center; padding:20px;">Record to generate studio layers...</div>
+            <div class="controls-row">
+                <button class="btn" id="analyzeBtn" disabled>START FORENSIC SCAN</button>
+                <div style="flex-grow:1; display:flex; align-items:center; gap:10px; font-size:0.7rem;">
+                    <span style="color:var(--accent-blue)">FILE NAME:</span>
+                    <span id="fileName">NO DATA LOADED</span>
+                </div>
+            </div>
+
+            <div id="terminal"></div>
+        </div>
+
+        <!-- Sidebar Intelligence -->
+        <div class="stats-panel">
+            <div class="card">
+                <h2>MANIPULATION PROBABILITY</h2>
+                <div class="detect-meter">
+                    <div class="meter-fill" id="meterFill"></div>
+                    <div class="meter-label" id="meterLabel">--%</div>
+                </div>
+                <p id="verdict" style="font-size:0.75rem; text-align:center; margin-top:10px; font-weight:bold;"></p>
+            </div>
+
+            <div class="card">
+                <h2>FORENSIC HOTSPOTS</h2>
+                <div class="hotspot-list" id="hotspotList">
+                    <p style="opacity:0.3; text-align:center; padding:20px;">NO ANALYSIS PERFORMED</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>INTEGRITY RESTORATION PREVIEW</h2>
+                <div class="restoration-view" id="restoreView">
+                    <span style="opacity:0.2; font-size:0.6rem; text-align:center;">AI-RECONSTRUCTED TARGET
+                        PREVIEW</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Loading Overlay -->
+    <!-- Loading State -->
     <div id="loadingOverlay" class="loading-overlay hidden">
-        <div class="spinner"></div>
-        <div id="loadingText">Analyzing Vocal Patterns...</div>
+        <div role="status">
+            <svg aria-hidden="true" style="width: 50px; height: 50px; fill: var(--accent-red);" viewBox="0 0 100 101"
+                fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                    fill="currentColor" />
+                <path
+                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                    fill="currentFill" />
+            </svg>
+        </div>
+        <div class="glitch-text" id="loadingText">INITIATING DEEP SCAN...</div>
     </div>
 
     <script>
-        // --- AUDIO ENGINE ---
-        let audioContext;
-        let mainVocalBuffer;
-        let mediaRecorder;
-        let audioChunks = [];
-        let analyzer;
-        let animationId;
-
-        const recordBtn = document.getElementById('recordBtn');
-        const statusText = document.getElementById('statusText');
-        const harmonyStack = document.getElementById('harmonyStack');
-        const aiAnalysis = document.getElementById('aiAnalysis');
+        const fileInput = document.getElementById('fileInput');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const vlogPlayer = document.getElementById('vlogPlayer');
+        const uploadPrompt = document.getElementById('uploadPrompt');
+        const scanLine = document.getElementById('scanLine');
+        const terminal = document.getElementById('terminal');
+        const meterFill = document.getElementById('meterFill');
+        const meterLabel = document.getElementById('meterLabel');
+        const verdict = document.getElementById('verdict');
+        const hotspotList = document.getElementById('hotspotList');
+        const restoreView = document.getElementById('restoreView');
         const loadingOverlay = document.getElementById('loadingOverlay');
 
-        async function initAudio() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
+        let videoBase64 = null;
+        let mimeType = null;
+
+        function log(msg, color = 'var(--accent-green)') {
+            const line = document.createElement('div');
+            line.style.color = color;
+            line.textContent = `> ${new Date().toLocaleTimeString()} : ${msg}`;
+            terminal.appendChild(line);
+            terminal.scrollTop = terminal.scrollHeight;
         }
 
-        recordBtn.addEventListener('click', async () => {
-            await initAudio();
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-            if (mediaRecorder && mediaRecorder.state === 'recording') {
-                mediaRecorder.stop();
-                recordBtn.classList.remove('recording');
-                statusText.textContent = 'PROCESSING...';
-            } else {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    startVisualizer(stream);
+            mimeType = file.type;
+            const reader = new FileReader();
 
-                    // Detect supported mime type
-                    const supportedType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg';
-                    mediaRecorder = new MediaRecorder(stream, { mimeType: supportedType });
-                    audioChunks = [];
-
-                    mediaRecorder.ondataavailable = e => {
-                        if (e.data.size > 0) audioChunks.push(e.data);
-                    };
-                    mediaRecorder.onstop = processAudio;
-
-                    mediaRecorder.start();
-                    recordBtn.classList.add('recording');
-                    statusText.textContent = 'RECORDING RAW...';
-
-                    // Auto-stop after 5 seconds to prevent large payload hangs
-                    setTimeout(() => {
-                        if (mediaRecorder.state === 'recording') {
-                            mediaRecorder.stop();
-                            recordBtn.classList.remove('recording');
-                        }
-                    }, 5000);
-
-                } catch (err) {
-                    alert('Mic access denied: ' + err.message);
-                }
-            }
+            log(`LOADING DATA: ${file.name}`);
+            reader.onload = (event) => {
+                videoBase64 = event.target.result.split(',')[1];
+                vlogPlayer.src = URL.createObjectURL(file);
+                uploadPrompt.style.display = 'none';
+                analyzeBtn.disabled = false;
+                document.getElementById('fileName').textContent = file.name.toUpperCase();
+                log("CORE DATA BUFFERED. READY FOR SCAN.");
+            };
+            reader.readAsDataURL(file);
         });
 
-        async function processAudio() {
-            console.log("Audio recording stopped. Processing chunks:", audioChunks.length);
-            if (audioChunks.length === 0) return alert("No audio recorded!");
+        analyzeBtn.addEventListener('click', async () => {
+            if (!videoBase64) return;
 
-            const mimeType = mediaRecorder.mimeType;
-            const audioBlob = new Blob(audioChunks, { type: mimeType });
-
-            console.log("Captured MIME:", mimeType, "Size:", audioBlob.size);
-
-            try {
-                const arrayBuffer = await audioBlob.arrayBuffer();
-                mainVocalBuffer = await audioContext.decodeAudioData(arrayBuffer);
-
-                // Convert to Base64 for Gemini
-                const reader = new FileReader();
-                reader.readAsDataURL(audioBlob);
-                reader.onloadend = async () => {
-                    const base64Audio = reader.result.split(',')[1];
-                    console.log("Sending to AI analysis...");
-                    await generateHarmonies(base64Audio, mimeType);
-                };
-            } catch (e) {
-                console.error("Audio Decode Error:", e);
-                alert("Could not process audio format. Try a shorter recording.");
-                statusText.textContent = 'STUDIO IDLE';
-            }
-        }
-
-        async function generateHarmonies(base64Audio, mimeType) {
+            // UI State
             loadingOverlay.classList.remove('hidden');
+            analyzeBtn.disabled = true;
+            scanLine.style.display = 'block';
+            log("INJECTING FORENSIC PROBES...", 'var(--accent-blue)');
+
             try {
                 const response = await fetch('/api/generate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        audioData: base64Audio,
+                        videoData: videoBase64,
                         mimeType: mimeType
                     })
                 });
 
-                console.log("AI Response Status:", response.status);
-
                 const data = await response.json();
                 if (data.error) throw new Error(data.error);
 
-                aiAnalysis.textContent = `DETECTED: ${data.key} | ${data.note} | ${data.bpm} BPM`;
-                renderHarmonyStack(data.intervals);
-                playFullStack(data.intervals);
-                statusText.textContent = 'READY';
+                log("SCAN COMPLETE. DECODING INTELLIGENCE...", 'var(--accent-green)');
+                renderResults(data);
 
             } catch (err) {
-                alert('Harmony Error: ' + err.message);
-                statusText.textContent = 'STUDIO IDLE';
+                log(`FATAL ERROR: ${err.message}`, 'var(--accent-red)');
+                alert("SCAN FAILURE: " + err.message);
             } finally {
                 loadingOverlay.classList.add('hidden');
+                scanLine.style.display = 'none';
+                analyzeBtn.disabled = false;
             }
-        }
+        });
 
-        function renderHarmonyStack(intervals) {
-            harmonyStack.innerHTML = '';
-            const labels = ['High Harmony', 'Low Harmony', 'Sub Layer'];
-            intervals.forEach((interval, i) => {
-                const track = document.createElement('div');
-                track.className = 'harmony-track';
-                track.innerHTML = `
-                    <div class="track-info">
-                        <span>${labels[i] || 'AI Layer ' + (i + 1)}</span>
-                        <span>Shift: ${interval > 0 ? '+' : ''}${interval} Semitones</span>
-                    </div>
-                    <div style="color:var(--accent-secondary); font-size:0.8rem;">● ACTIVE</div>
-                `;
-                harmonyStack.appendChild(track);
-            });
-        }
+        function renderResults(data) {
+            // Update Meter
+            const prob = data.confidence;
+            meterFill.style.width = `${prob}%`;
+            meterLabel.textContent = `${prob}%`;
 
-        function playFullStack(intervals) {
-            // Play original
-            playBuffer(mainVocalBuffer, 0, 1.0);
-
-            // Play harmonies with pitch shift (browser-side semi-tone shift via detune)
-            intervals.forEach(interval => {
-                playBuffer(mainVocalBuffer, interval, 0.7);
-            });
-        }
-
-        function playBuffer(buffer, semitones, volume) {
-            const source = audioContext.createBufferSource();
-            source.buffer = buffer;
-            source.detune.value = semitones * 100; // 100 cents = 1 semitone
-
-            const gain = audioContext.createGain();
-            gain.gain.value = volume;
-
-            source.connect(gain);
-            gain.connect(audioContext.destination);
-            source.start(0);
-        }
-
-        // --- VISUALIZER ---
-        function startVisualizer(stream) {
-            if (animationId) cancelAnimationFrame(animationId);
-            const source = audioContext.createMediaStreamSource(stream);
-            analyzer = audioContext.createAnalyser();
-            source.connect(analyzer);
-
-            const canvas = document.getElementById('visualizer');
-            const ctx = canvas.getContext('2d');
-
-            function draw() {
-                animationId = requestAnimationFrame(draw);
-                const bufferLength = analyzer.frequencyBinCount;
-                const dataArray = new Uint8Array(bufferLength);
-                analyzer.getByteFrequencyData(dataArray);
-
-                ctx.fillStyle = '#0a0b1e';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                const barWidth = (canvas.width / bufferLength) * 2.5;
-                let barHeight;
-                let x = 0;
-
-                for (let i = 0; i < bufferLength; i++) {
-                    barHeight = dataArray[i] / 2;
-                    ctx.fillStyle = `rgba(112, 0, 255, ${barHeight / 150})`;
-                    ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-                    x += barWidth + 1;
-                }
+            if (data.is_deepfake) {
+                verdict.textContent = "VERDICT: MANIPULATED CONTENT DETECTED";
+                verdict.style.color = 'var(--accent-red)';
+            } else {
+                verdict.textContent = "VERDICT: AUTHENTIC CONTENT";
+                verdict.style.color = 'var(--accent-green)';
             }
-            draw();
+
+            // Update Hotspots
+            hotspotList.innerHTML = '';
+            data.hotspots.forEach(spot => {
+                const div = document.createElement('div');
+                div.className = 'hotspot-item';
+                div.textContent = `[!] ${spot}`;
+                hotspotList.appendChild(div);
+            });
+
+            // Restoration Preview (Pollinations)
+            log("RECONSTRUCTING TARGET FACIAL INTEGRITY...");
+            const restorePrompt = encodeURIComponent(`hyper-realistic forensic facial restoration, ${data.restoration_description}, clean sharp skin, cinematic lighting, 8k`);
+            restoreView.style.backgroundImage = `url('https://image.pollinations.ai/prompt/${restorePrompt}')`;
+
+            log("FORENSIC DOSSIER FINALIZED.");
         }
+
+        // INIT LOG
+        log("DEEPSCAN FORENSIC ENGINE INITIALIZED.");
+        log("AWAITING TARGET CORE DATA...");
     </script>
 </body>
 
