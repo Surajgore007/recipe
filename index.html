@@ -4,239 +4,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeepScan AI | Video Fake Forensic Tool</title>
+    <title>OpenRep | Autonomous Scientific Replication Engine</title>
     <style>
         :root {
-            --bg-color: #05070a;
-            --accent-red: #ff3e3e;
-            --accent-green: #00ff41;
-            --accent-blue: #00d4ff;
-            --text-main: #e0e0e0;
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --bg-color: #f8f9fa;
+            --sidebar-color: #ffffff;
+            --accent-blue: #0066cc;
+            --accent-red: #d93025;
+            --accent-green: #1e8e3e;
+            --text-main: #202124;
+            --border-color: #dadce0;
         }
 
         body {
             margin: 0;
-            font-family: 'IBM Plex Mono', monospace, segment7;
-            background: var(--bg-color);
-            background-image:
-                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-                linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
-            background-size: 100% 4px, 4px 100%;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
             color: var(--text-main);
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        .forensic-header {
-            width: 100%;
-            padding: 15px 40px;
+        /* Sidebar Lab Panel */
+        .lab-sidebar {
+            width: 380px;
+            background: var(--sidebar-color);
+            border-right: 1px solid var(--border-color);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.8);
-            border-bottom: 2px solid var(--accent-red);
+            flex-direction: column;
+            padding: 24px;
             box-sizing: border-box;
-            box-shadow: 0 0 20px rgba(255, 62, 62, 0.2);
+            gap: 20px;
+            overflow-y: auto;
         }
 
         .logo {
             font-size: 1.4rem;
-            font-weight: 900;
-            color: var(--accent-red);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .system-status {
-            font-size: 0.8rem;
-            color: var(--accent-green);
-        }
-
-        .main-frame {
-            width: 100%;
-            max-width: 1200px;
-            padding: 30px;
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 20px;
-            box-sizing: border-box;
-        }
-
-        .scanner-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .video-viewport {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: #000;
-            border: 1px solid var(--glass-border);
-            position: relative;
-            overflow: hidden;
+            font-weight: 700;
+            color: var(--accent-blue);
             display: flex;
             align-items: center;
-            justify-content: center;
-        }
-
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .scan-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            border: 2px solid transparent;
-            box-sizing: border-box;
-        }
-
-        .scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--accent-red);
-            box-shadow: 0 0 15px var(--accent-red);
-            animation: scan 4s linear infinite;
-            display: none;
-        }
-
-        @keyframes scan {
-            0% {
-                top: 0%;
-            }
-
-            100% {
-                top: 100%;
-            }
-        }
-
-        .controls-row {
-            display: flex;
-            gap: 15px;
-            padding: 15px;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-        }
-
-        .btn {
-            padding: 12px 24px;
-            background: transparent;
-            border: 1px solid var(--accent-red);
-            color: var(--accent-red);
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: all 0.3s;
-        }
-
-        .btn:hover:not(:disabled) {
-            background: var(--accent-red);
-            color: #000;
-            box-shadow: 0 0 15px var(--accent-red);
-        }
-
-        .btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        .stats-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--glass-border);
-            padding: 20px;
-            position: relative;
-        }
-
-        .card h2 {
-            margin: 0 0 15px 0;
-            font-size: 0.8rem;
-            color: var(--accent-blue);
-            text-transform: uppercase;
-            border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 8px;
-        }
-
-        .detect-meter {
-            height: 40px;
-            background: #111;
-            border: 1px solid var(--glass-border);
-            position: relative;
+            gap: 10px;
             margin-bottom: 10px;
         }
 
-        .meter-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--accent-green), var(--accent-red));
-            transition: width 1s ease;
-        }
-
-        .meter-label {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-weight: 900;
-            font-size: 1.2rem;
-            color: #fff;
-            text-shadow: 0 0 5px #000;
-        }
-
-        .hotspot-list {
+        .section-title {
             font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.7);
-            max-height: 200px;
-            overflow-y: auto;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #70757a;
+            margin-bottom: 8px;
         }
 
-        .hotspot-item {
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .restoration-view {
+        textarea {
             width: 100%;
-            aspect-ratio: 1/1;
-            background: #000;
-            border: 1px solid var(--glass-border);
+            height: 200px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: none;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-zone:hover {
+            background: #f1f3f4;
+            border-color: var(--accent-blue);
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
             margin-top: 10px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #174ea6;
+        }
+
+        .btn-primary:disabled {
+            background: #bdc1c6;
+            cursor: not-allowed;
+        }
+
+        /* Main Analysis Workspace */
+        .workspace {
+            flex: 1;
             display: flex;
+            flex-direction: column;
+            padding: 40px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            gap: 32px;
+        }
+
+        .header-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #fff;
+            border: 8px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            background-size: cover;
-            background-position: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
-        #terminal {
-            font-size: 0.7rem;
-            color: var(--accent-green);
-            height: 100px;
-            overflow-y: auto;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 10px;
-            border-top: 2px solid var(--accent-red);
-            width: 100%;
-            box-sizing: border-box;
+        .score-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent-blue);
+        }
+
+        .score-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #70757a;
+        }
+
+        .verdict-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            background: #e8f0fe;
+            color: var(--accent-blue);
+        }
+
+        .card-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            margin: 0 0 16px 0;
+            font-size: 1rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .gap-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .gap-item:last-child {
+            border-bottom: none;
+        }
+
+        .severity-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+
+        .severity-High {
+            background: var(--accent-red);
+        }
+
+        .severity-Medium {
+            background: #f9ab00;
+        }
+
+        .severity-Low {
+            background: var(--accent-green);
+        }
+
+        .gap-text {
+            font-size: 0.85rem;
+        }
+
+        .gap-cat {
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .finding-tag {
+            display: inline-block;
+            background: #f1f3f4;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin: 4px;
+            border: 1px solid #dadce0;
+        }
+
+        #fileInput {
+            display: none;
         }
 
         .loading-overlay {
@@ -245,8 +247,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
             z-index: 1000;
             display: flex;
             flex-direction: column;
@@ -255,24 +256,22 @@
             gap: 20px;
         }
 
-        .glitch-text {
-            animation: glitch 1s linear infinite;
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
-        @keyframes glitch {
-
-            2%,
-            64% {
-                transform: translate(2px, 0) skew(0deg);
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
             }
 
-            4%,
-            60% {
-                transform: translate(-2px, 0) skew(0deg);
-            }
-
-            62% {
-                transform: translate(0, 0) skew(5deg);
+            100% {
+                transform: rotate(360deg);
             }
         }
 
@@ -280,222 +279,198 @@
             display: none;
         }
 
-        #fileInput {
-            display: none;
+        .placeholder-text {
+            color: #bdc1c6;
+            text-align: center;
+            margin-top: 100px;
+            font-style: italic;
         }
     </style>
 </head>
 
 <body>
-    <header class="forensic-header">
-        <div class="logo">DeepScan Forensic Tool v2.0</div>
-        <div class="system-status" id="systemStatus">[ SYSTEM SECURE ]</div>
-    </header>
-
-    <div class="main-frame">
-        <!-- Main Analysis Engine -->
-        <div class="scanner-panel">
-            <div class="video-viewport">
-                <video id="vlogPlayer" controls></video>
-                <div class="scan-overlay">
-                    <div class="scan-line" id="scanLine"></div>
-                </div>
-                <div id="uploadPrompt" style="position:absolute; text-align:center;">
-                    <p style="opacity:0.5;">DRAG VIDEO OR CLICK TO LOAD FORENSIC TARGET</p>
-                    <button class="btn" onclick="document.getElementById('fileInput').click()">LOAD CORE DATA</button>
-                    <input type="file" id="fileInput" accept="video/*">
-                </div>
-            </div>
-
-            <div class="controls-row">
-                <button class="btn" id="analyzeBtn" disabled>START FORENSIC SCAN</button>
-                <div style="flex-grow:1; display:flex; align-items:center; gap:10px; font-size:0.7rem;">
-                    <span style="color:var(--accent-blue)">FILE NAME:</span>
-                    <span id="fileName">NO DATA LOADED</span>
-                </div>
-            </div>
-
-            <div id="terminal"></div>
+    <div class="lab-sidebar">
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--accent-blue)">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z" />
+            </svg>
+            OpenRep AI
         </div>
 
-        <!-- Sidebar Intelligence -->
-        <div class="stats-panel">
-            <div class="card">
-                <h2>MANIPULATION PROBABILITY</h2>
-                <div class="detect-meter">
-                    <div class="meter-fill" id="meterFill"></div>
-                    <div class="meter-label" id="meterLabel">--%</div>
+        <div class="input-group">
+            <div class="section-title">Step 1: Paper Methodology</div>
+            <textarea id="methodText"
+                placeholder="Paste the paper's methodology, claims, and statistical hypothesis here..."></textarea>
+        </div>
+
+        <div class="input-group">
+            <div class="section-title">Step 2: Replication Dataset</div>
+            <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                <div style="font-size: 1.5rem; margin-bottom: 8px;">📊</div>
+                <div id="fileInfo" style="font-size: 0.85rem; font-weight: 600;">UPLOAD CSV/JSON DATA</div>
+                <div style="font-size: 0.7rem; color: #70757a;">Max 3MB for high-fidelity scanning</div>
+                <input type="file" id="fileInput" accept=".csv,.json,.txt">
+            </div>
+        </div>
+
+        <button class="btn-primary" id="replicateBtn" disabled>START REPLICATION CROSS-EXAM</button>
+
+        <div style="margin-top: auto; font-size: 0.65rem; color: #70757a; text-align: center;">
+            Engine: Gemini 2.0 Flash • Mode: Autonomous Peer Review
+        </div>
+    </div>
+
+    <div class="workspace">
+        <div id="placeholder" class="placeholder-text">
+            Upload methodology and dataset to begin autonomous replication...
+        </div>
+
+        <div id="results" class="hidden">
+            <div class="header-stats">
+                <div>
+                    <h1 style="margin: 0 0 10px 0;">Replication Integrity Report</h1>
+                    <div class="verdict-badge" id="verdictLabel">--</div>
                 </div>
-                <p id="verdict" style="font-size:0.75rem; text-align:center; margin-top:10px; font-weight:bold;"></p>
+                <div class="score-circle">
+                    <div class="score-value" id="scoreValue">--</div>
+                    <div class="score-label">INTEGRITY %</div>
+                </div>
             </div>
 
-            <div class="card">
-                <h2>FORENSIC HOTSPOTS</h2>
-                <div class="hotspot-list" id="hotspotList">
-                    <p style="opacity:0.3; text-align:center; padding:20px;">NO ANALYSIS PERFORMED</p>
-                </div>
+            <div class="card" style="margin-bottom: 24px;">
+                <h2>Executive Summary</h2>
+                <p id="summaryText" style="font-size: 0.9rem; line-height: 1.6; color: #3c4043;"></p>
             </div>
 
-            <div class="card">
-                <h2>INTEGRITY RESTORATION PREVIEW</h2>
-                <div class="restoration-view" id="restoreView">
-                    <span style="opacity:0.2; font-size:0.6rem; text-align:center;">AI-RECONSTRUCTED TARGET
-                        PREVIEW</span>
+            <div class="card-row">
+                <div class="card">
+                    <h2>Reproducibility Gaps</h2>
+                    <div id="gapList"></div>
+                </div>
+                <div class="card">
+                    <h2>Key Evidence Findings</h2>
+                    <div id="findingsTags"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Loading State -->
     <div id="loadingOverlay" class="loading-overlay hidden">
-        <div role="status">
-            <svg aria-hidden="true" style="width: 50px; height: 50px; fill: var(--accent-red);" viewBox="0 0 100 101"
-                fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                    fill="currentColor" />
-                <path
-                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                    fill="currentFill" />
-            </svg>
-        </div>
-        <div class="glitch-text" id="loadingText">INITIATING DEEP SCAN...</div>
+        <div class="spinner"></div>
+        <div style="font-weight: 600; color: var(--accent-blue);">Performing Statistical Cross-Examination...</div>
     </div>
 
     <script>
         const fileInput = document.getElementById('fileInput');
-        const analyzeBtn = document.getElementById('analyzeBtn');
-        const vlogPlayer = document.getElementById('vlogPlayer');
-        const uploadPrompt = document.getElementById('uploadPrompt');
-        const scanLine = document.getElementById('scanLine');
-        const terminal = document.getElementById('terminal');
-        const meterFill = document.getElementById('meterFill');
-        const meterLabel = document.getElementById('meterLabel');
-        const verdict = document.getElementById('verdict');
-        const hotspotList = document.getElementById('hotspotList');
-        const restoreView = document.getElementById('restoreView');
+        const methodText = document.getElementById('methodText');
+        const replicateBtn = document.getElementById('replicateBtn');
+        const fileInfo = document.getElementById('fileInfo');
         const loadingOverlay = document.getElementById('loadingOverlay');
+        const placeholder = document.getElementById('placeholder');
+        const results = document.getElementById('results');
 
-        let videoBase64 = null;
-        let mimeType = null;
+        // Results UI elements
+        const verdictLabel = document.getElementById('verdictLabel');
+        const scoreValue = document.getElementById('scoreValue');
+        const summaryText = document.getElementById('summaryText');
+        const gapList = document.getElementById('gapList');
+        const findingsTags = document.getElementById('findingsTags');
 
-        function log(msg, color = 'var(--accent-green)') {
-            const line = document.createElement('div');
-            line.style.color = color;
-            line.textContent = `> ${new Date().toLocaleTimeString()} : ${msg}`;
-            terminal.appendChild(line);
-            terminal.scrollTop = terminal.scrollHeight;
-        }
+        let datasetContent = "";
+        let datasetType = "";
 
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
-            // Vercel payload limit is 4.5MB (base64 adds 33% overhead)
-            const MAX_SIZE = 3 * 1024 * 1024; // 3MB
-            if (file.size > MAX_SIZE) {
-                alert(`FILE TOO LARGE: ${file.name} is ${(file.size / (1024 * 1024)).toFixed(2)}MB. Max limit is 3MB for serverless processing.`);
-                fileInput.value = '';
+            if (file.size > 3 * 1024 * 1024) {
+                alert("FILE TOO LARGE: Max 3MB for replication data.");
                 return;
             }
 
-            mimeType = file.type;
+            datasetType = file.name.split('.').pop().toUpperCase();
             const reader = new FileReader();
-
-            log(`LOADING DATA: ${file.name} (${(file.size / (1024 * 1024)).toFixed(2)}MB)`);
             reader.onload = (event) => {
-                videoBase64 = event.target.result.split(',')[1];
-                vlogPlayer.src = URL.createObjectURL(file);
-                uploadPrompt.style.display = 'none';
-                analyzeBtn.disabled = false;
-                document.getElementById('fileName').textContent = file.name.toUpperCase();
-                log("CORE DATA BUFFERED. READY FOR SCAN.");
+                datasetContent = event.target.result;
+                fileInfo.textContent = `LOADED: ${file.name.toUpperCase()}`;
+                checkReady();
             };
-            reader.readAsDataURL(file);
+            reader.readAsText(file);
         });
 
-        analyzeBtn.addEventListener('click', async () => {
-            if (!videoBase64) return;
+        methodText.addEventListener('input', checkReady);
 
-            // UI State
+        function checkReady() {
+            replicateBtn.disabled = !(methodText.value.trim() && datasetContent);
+        }
+
+        replicateBtn.addEventListener('click', async () => {
             loadingOverlay.classList.remove('hidden');
-            analyzeBtn.disabled = true;
-            scanLine.style.display = 'block';
-            log("INJECTING FORENSIC PROBES (DATA PAYLOAD: ~4MB)...", 'var(--accent-blue)');
+            replicateBtn.disabled = true;
 
             try {
                 const response = await fetch('/api/generate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        videoData: videoBase64,
-                        mimeType: mimeType
+                        methodology: methodText.value.trim(),
+                        dataset: datasetContent,
+                        dataType: datasetType
                     })
                 });
 
                 if (!response.ok) {
                     const errorText = await response.text();
-                    if (errorText.includes("Request Entity Too Large") || response.status === 413) {
-                        throw new Error("VIDEO TOO LARGE: Payload exceeded Vercel's 4.5MB limit. Please upload a smaller or shorter clip.");
-                    }
-                    try {
-                        const errorData = JSON.parse(errorText);
-                        throw new Error(errorData.error || "Server error");
-                    } catch (e) {
-                        throw new Error(`Server Error (${response.status}): ${errorText.substring(0, 50)}...`);
-                    }
+                    throw new Error(errorText || "Network fail");
                 }
 
                 const data = await response.json();
-                if (data.error) throw new Error(data.error);
-
-                log("SCAN COMPLETE. DECODING INTELLIGENCE...", 'var(--accent-green)');
                 renderResults(data);
 
             } catch (err) {
-                log(`FATAL ERROR: ${err.message}`, 'var(--accent-red)');
-                alert("SCAN FAILURE: " + err.message);
+                alert("REPLICATION FAILURE: " + err.message);
+                console.error(err);
             } finally {
                 loadingOverlay.classList.add('hidden');
-                scanLine.style.display = 'none';
-                analyzeBtn.disabled = false;
+                replicateBtn.disabled = false;
             }
         });
 
         function renderResults(data) {
-            // Update Meter
-            const prob = data.confidence;
-            meterFill.style.width = `${prob}%`;
-            meterLabel.textContent = `${prob}%`;
+            placeholder.classList.add('hidden');
+            results.classList.remove('hidden');
 
-            if (data.is_deepfake) {
-                verdict.textContent = "VERDICT: MANIPULATED CONTENT DETECTED";
-                verdict.style.color = 'var(--accent-red)';
-            } else {
-                verdict.textContent = "VERDICT: AUTHENTIC CONTENT";
-                verdict.style.color = 'var(--accent-green)';
-            }
+            verdictLabel.textContent = `VERDICT: ${data.verdict.toUpperCase()}`;
+            scoreValue.textContent = data.score;
+            summaryText.textContent = data.summary;
 
-            // Update Hotspots
-            hotspotList.innerHTML = '';
-            data.hotspots.forEach(spot => {
-                const div = document.createElement('div');
-                div.className = 'hotspot-item';
-                div.textContent = `[!] ${spot}`;
-                hotspotList.appendChild(div);
+            // Render Gaps
+            gapList.innerHTML = '';
+            data.gaps.forEach(gap => {
+                const item = document.createElement('div');
+                item.className = 'gap-item';
+                item.innerHTML = `
+                    <div class="severity-dot severity-${gap.severity}"></div>
+                    <div class="gap-text">
+                        <span class="gap-cat">${gap.category}</span>
+                        ${gap.description}
+                    </div>
+                `;
+                gapList.appendChild(item);
             });
 
-            // Restoration Preview (Pollinations)
-            log("RECONSTRUCTING TARGET FACIAL INTEGRITY...");
-            const restorePrompt = encodeURIComponent(`hyper-realistic forensic facial restoration, ${data.restoration_description}, clean sharp skin, cinematic lighting, 8k`);
-            restoreView.style.backgroundImage = `url('https://image.pollinations.ai/prompt/${restorePrompt}')`;
+            // Render Findings
+            findingsTags.innerHTML = '';
+            data.findings.forEach(finding => {
+                const tag = document.createElement('div');
+                tag.className = 'finding-tag';
+                tag.textContent = finding;
+                findingsTags.appendChild(tag);
+            });
 
-            log("FORENSIC DOSSIER FINALIZED.");
+            // Scroll results into view
+            results.scrollIntoView({ behavior: 'smooth' });
         }
-
-        // INIT LOG
-        log("DEEPSCAN FORENSIC ENGINE INITIALIZED.");
-        log("AWAITING TARGET CORE DATA...");
     </script>
 </body>
 
