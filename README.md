@@ -11,18 +11,9 @@ An emerging security threat visualization dashboard that simulates dark web scra
 ## 🛠️ Tech Stack
 - **Frontend**: Vanilla HTML5, CSS3 (Modern Grid/Flexbox), JavaScript (ES6+).
 - **AI Core**: Google Gemini 2.5 Flash API.
-- **Visualization**: Pollinations AI (Image Generation).
 
 ## 📋 Setup & Usage
-1. **Clone the project**:
-   ```bash
-   git clone https://github.com/Surajgore007/recipe.git
-   ```
-2. **Open `index.html`**:
-   Find the `GEMINI_API_KEY` variable at the top of the `<script>` tag and ensure your key is present.
-3. **Launch**:
-   Open `index.html` in any modern web browser.
-4. **Scan**:
+1. **Scan**:
    Enter a target sector (e.g., "Healthcare", "FinTech") and click **INITIATE SCAN**.
 
 ## 🛑 Disclaimer
