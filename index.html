@@ -7,26 +7,33 @@
     <title>OpenRep | Autonomous Scientific Replication Engine</title>
     <style>
         :root {
-            --bg-color: #f8f9fa;
+            --bg-color: #fcfdfe;
             --sidebar-color: #ffffff;
-            --accent-blue: #0066cc;
-            --accent-red: #d93025;
-            --accent-green: #1e8e3e;
-            --text-main: #202124;
-            --border-color: #dadce0;
+            --accent-blue: #0052cc;
+            --accent-green: #00875a;
+            --accent-red: #de350b;
+            --accent-yellow: #ffab00;
+            --text-main: #172b4d;
+            --border-color: #dfe1e6;
+            --glass-blue: rgba(0, 82, 204, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
             margin: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
+            padding: 0;
+            background: var(--bg-color);
             color: var(--text-main);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             height: 100vh;
             overflow: hidden;
         }
 
-        /* Sidebar Lab Panel */
+        /* Sidebar Lab Config */
         .lab-sidebar {
             width: 380px;
             background: var(--sidebar-color);
@@ -34,18 +41,19 @@
             display: flex;
             flex-direction: column;
             padding: 24px;
-            box-sizing: border-box;
             gap: 20px;
             overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
+            z-index: 10;
         }
 
         .logo {
             font-size: 1.4rem;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--accent-blue);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 10px;
         }
 
@@ -53,26 +61,28 @@
             font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
-            color: #70757a;
+            color: #6b778c;
+            letter-spacing: 0.5px;
             margin-bottom: 8px;
         }
 
         textarea {
             width: 100%;
-            height: 200px;
-            border: 1px solid var(--border-color);
+            height: 220px;
+            border: 2px solid var(--border-color);
             border-radius: 8px;
             padding: 12px;
             font-family: inherit;
             font-size: 0.9rem;
             resize: none;
-            box-sizing: border-box;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
+            background: #fff;
         }
 
         textarea:focus {
             border-color: var(--accent-blue);
+            background: #fdfdfd;
         }
 
         .upload-zone {
@@ -82,86 +92,138 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
+            background: var(--glass-blue);
         }
 
         .upload-zone:hover {
-            background: #f1f3f4;
             border-color: var(--accent-blue);
+            background: rgba(0, 82, 204, 0.1);
         }
 
         .btn-primary {
             background: var(--accent-blue);
             color: #fff;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             padding: 14px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
             margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .btn-primary:hover:not(:disabled) {
-            background: #174ea6;
+            background: #0747a6;
+            transform: translateY(-1px);
         }
 
         .btn-primary:disabled {
-            background: #bdc1c6;
+            background: #e1e4e8;
+            color: #9ea7b3;
             cursor: not-allowed;
         }
 
-        /* Main Analysis Workspace */
+        /* Replication Workspace */
         .workspace {
             flex: 1;
             display: flex;
             flex-direction: column;
             padding: 40px;
-            box-sizing: border-box;
             overflow-y: auto;
             gap: 32px;
         }
 
-        .header-stats {
+        .header-summary {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 24px;
         }
 
-        .score-circle {
-            width: 120px;
-            height: 120px;
+        .score-dial {
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             background: #fff;
-            border: 8px solid var(--border-color);
+            border: 10px solid var(--border-color);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
         }
 
         .score-value {
-            font-size: 2rem;
-            font-weight: 800;
+            font-size: 2.2rem;
+            font-weight: 900;
             color: var(--accent-blue);
         }
 
         .score-label {
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             font-weight: 700;
-            color: #70757a;
+            color: #6b778c;
         }
 
-        .verdict-badge {
+        .verdict-tag {
             padding: 8px 16px;
-            border-radius: 20px;
+            border-radius: 4px;
             font-weight: 700;
             font-size: 0.9rem;
-            background: #e8f0fe;
-            color: var(--accent-blue);
+            display: inline-block;
+            margin-top: 12px;
         }
 
-        .card-row {
+        .verdict-Confirmed {
+            background: #e3fcef;
+            color: var(--accent-green);
+        }
+
+        .verdict-Divergent {
+            background: #fff7e6;
+            color: var(--accent-yellow);
+        }
+
+        .verdict-Failed {
+            background: #ffebe6;
+            color: var(--accent-red);
+        }
+
+        /* Metrics Row */
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .metric-card {
+            background: #fff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .m-val {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .m-lab {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #6b778c;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        /* Detail Panels */
+        .detail-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 24px;
@@ -175,73 +237,76 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
-        .card h2 {
-            margin: 0 0 16px 0;
-            font-size: 1rem;
-            color: var(--text-main);
+        .card h3 {
+            margin: 0 0 20px 0;
+            font-size: 1.1rem;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
         .gap-item {
-            display: flex;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid #f1f3f4;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f4f5f7;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--accent-blue);
         }
 
-        .gap-item:last-child {
-            border-bottom: none;
-        }
-
-        .severity-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-top: 4px;
-            flex-shrink: 0;
-        }
-
-        .severity-High {
-            background: var(--accent-red);
-        }
-
-        .severity-Medium {
-            background: #f9ab00;
-        }
-
-        .severity-Low {
-            background: var(--accent-green);
-        }
-
-        .gap-text {
-            font-size: 0.85rem;
-        }
-
-        .gap-cat {
-            font-weight: 700;
-            font-size: 0.75rem;
+        .gap-severity {
+            font-size: 0.6rem;
+            font-weight: 900;
+            padding: 2px 6px;
+            border-radius: 3px;
             text-transform: uppercase;
+            float: right;
+        }
+
+        .sev-High {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .sev-Medium {
+            background: var(--accent-yellow);
+            color: white;
+        }
+
+        .sev-Low {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .gap-title {
+            font-weight: 700;
+            font-size: 0.85rem;
             display: block;
-            margin-bottom: 2px;
+            margin-bottom: 5px;
         }
 
-        .finding-tag {
-            display: inline-block;
-            background: #f1f3f4;
-            padding: 6px 12px;
-            border-radius: 4px;
+        .gap-desc {
             font-size: 0.8rem;
-            margin: 4px;
-            border: 1px solid #dadce0;
+            line-height: 1.4;
+            color: #42526e;
         }
 
-        #fileInput {
+        .finding-chip {
+            display: block;
+            background: #ebf2ff;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            border: 1px solid #c2dbff;
+            color: #0042ad;
+        }
+
+        /* State Management */
+        .hidden {
             display: none;
         }
 
-        .loading-overlay {
+        .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
@@ -253,12 +318,11 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 20px;
         }
 
         .spinner {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border: 4px solid #f3f3f3;
             border-top: 4px solid var(--accent-blue);
             border-radius: 50%;
@@ -275,12 +339,12 @@
             }
         }
 
-        .hidden {
+        #fileInput {
             display: none;
         }
 
         .placeholder-text {
-            color: #bdc1c6;
+            color: #9ea7b3;
             text-align: center;
             margin-top: 100px;
             font-style: italic;
@@ -291,117 +355,123 @@
 <body>
     <div class="lab-sidebar">
         <div class="logo">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--accent-blue)">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--accent-blue)">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z" />
             </svg>
             OpenRep AI
         </div>
 
         <div class="input-group">
-            <div class="section-title">Step 1: Paper Methodology</div>
-            <textarea id="methodText"
-                placeholder="Paste the paper's methodology, claims, and statistical hypothesis here..."></textarea>
+            <div class="section-title">1. Paper Methodology</div>
+            <textarea id="methodInput"
+                placeholder="Paste the paper's claims, statistical hypotheses, and experimental methodology here..."></textarea>
         </div>
 
         <div class="input-group">
-            <div class="section-title">Step 2: Replication Dataset</div>
+            <div class="section-title">2. Supporting Dataset</div>
             <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-                <div style="font-size: 1.5rem; margin-bottom: 8px;">📊</div>
-                <div id="fileInfo" style="font-size: 0.85rem; font-weight: 600;">UPLOAD CSV/JSON DATA</div>
-                <div style="font-size: 0.7rem; color: #70757a;">Max 3MB for high-fidelity scanning</div>
+                <div style="font-size: 1.8rem; margin-bottom: 10px;">📄</div>
+                <div id="fileInfo" style="font-size: 0.9rem; font-weight: 700;">UPLOAD CSV/JSON DATA</div>
+                <div style="font-size: 0.7rem; color: #6b778c; margin-top: 4px;">Supports high-speed statistical parsing
+                </div>
                 <input type="file" id="fileInput" accept=".csv,.json,.txt">
             </div>
         </div>
 
-        <div class="input-group">
-            <div class="section-title">Step 3: AI Model Selection</div>
-            <select id="modelSelect"
-                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: #fff; font-family: inherit;">
-                <option value="gemini-2.0-flash">Gemini 2.0 Flash (Fastest/Multimodal)</option>
-                <option value="gemini-1.5-flash">Gemini 1.5 Flash (Stable/High Quota)</option>
-                <option value="gemini-1.5-pro">Gemini 1.5 Pro (Extreme Reasoning)</option>
-            </select>
-        </div>
+        <button class="btn-primary" id="replicateBtn" disabled>Perform Cross-Examination</button>
 
-        <button class="btn-primary" id="replicateBtn" disabled>START REPLICATION CROSS-EXAM</button>
-
-        <div id="footerEngine" style="margin-top: auto; font-size: 0.65rem; color: #70757a; text-align: center;">
-            Engine: Gemini 2.0 Flash • Mode: Autonomous Peer Review
+        <div
+            style="margin-top: auto; font-size: 0.7rem; color: #6b778c; text-align: center; border-top: 1px solid var(--border-color); padding-top: 20px;">
+            OpenRep Engine v2.4 • Gemini Flash Enhanced
         </div>
     </div>
 
     <div class="workspace">
         <div id="placeholder" class="placeholder-text">
-            Upload methodology and dataset to begin autonomous replication...
+            Initialize methodology and dataset to begin autonomous replication...
         </div>
 
         <div id="results" class="hidden">
-            <div class="header-stats">
-                <div>
-                    <h1 style="margin: 0 0 10px 0;">Replication Integrity Report</h1>
-                    <div class="verdict-badge" id="verdictLabel">--</div>
+            <div class="header-summary">
+                <div style="flex: 1;">
+                    <h1 style="margin: 0; font-size: 1.8rem;">Integrity Certification Report</h1>
+                    <div id="verdictLabel" class="verdict-tag">--</div>
+                    <p id="summaryText" style="margin-top: 20px; line-height: 1.6; color: #42526e; max-width: 800px;">
+                    </p>
                 </div>
-                <div class="score-circle">
-                    <div class="score-value" id="scoreValue">--</div>
-                    <div class="score-label">INTEGRITY %</div>
+                <div class="score-dial">
+                    <div class="score-value" id="scoreVal">--</div>
+                    <div class="score-label">REPRODUCIBILITY %</div>
                 </div>
             </div>
 
-            <div class="card" style="margin-bottom: 24px;">
-                <h2>Executive Summary</h2>
-                <p id="summaryText" style="font-size: 0.9rem; line-height: 1.6; color: #3c4043;"></p>
+            <div class="metrics-row">
+                <div class="metric-card">
+                    <div class="m-val" id="metStatistical">--</div>
+                    <div class="m-lab">Statistical Alignment</div>
+                </div>
+                <div class="metric-card">
+                    <div class="m-val" id="metLogical">--</div>
+                    <div class="m-lab">Logical Consistency</div>
+                </div>
+                <div class="metric-card">
+                    <div class="m-val" id="metAdequacy">--</div>
+                    <div class="m-lab">Sample Adequacy</div>
+                </div>
+                <div class="metric-card">
+                    <div class="m-val" id="metTransparency">--</div>
+                    <div class="m-lab">Transparency Level</div>
+                </div>
             </div>
 
-            <div class="card-row">
+            <div class="detail-grid">
                 <div class="card">
-                    <h2>Reproducibility Gaps</h2>
+                    <h3>Reproducibility Gaps</h3>
                     <div id="gapList"></div>
                 </div>
                 <div class="card">
-                    <h2>Key Evidence Findings</h2>
-                    <div id="findingsTags"></div>
+                    <h3>Key Evidence Ledger</h3>
+                    <div id="findingsList"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="loadingOverlay" class="loading-overlay hidden">
+    <div id="loadingOverlay" class="loading-screen hidden">
         <div class="spinner"></div>
-        <div style="font-weight: 600; color: var(--accent-blue);">Performing Statistical Cross-Examination...</div>
+        <div
+            style="margin-top: 25px; font-weight: 700; color: var(--accent-blue); letter-spacing: 1px; text-transform: uppercase;">
+            Crunching Statistical Distributions...</div>
     </div>
 
     <script>
-        const methodText = document.getElementById('methodText');
-        const replicateBtn = document.getElementById('replicateBtn');
+        const methodInput = document.getElementById('methodInput');
+        const fileInput = document.getElementById('fileInput');
         const fileInfo = document.getElementById('fileInfo');
-        const modelSelect = document.getElementById('modelSelect');
-        const footerEngine = document.getElementById('footerEngine');
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        const placeholder = document.getElementById('placeholder');
+        const replicateBtn = document.getElementById('replicateBtn');
         const results = document.getElementById('results');
+        const placeholder = document.getElementById('placeholder');
+        const loadingOverlay = document.getElementById('loadingOverlay');
 
-        // Results UI elements
+        // Result Elements
+        const scoreVal = document.getElementById('scoreVal');
         const verdictLabel = document.getElementById('verdictLabel');
-        const scoreValue = document.getElementById('scoreValue');
         const summaryText = document.getElementById('summaryText');
         const gapList = document.getElementById('gapList');
-        const findingsTags = document.getElementById('findingsTags');
+        const findingsList = document.getElementById('findingsList');
+
+        // Metrics
+        const metStatistical = document.getElementById('metStatistical');
+        const metLogical = document.getElementById('metLogical');
+        const metAdequacy = document.getElementById('metAdequacy');
+        const metTransparency = document.getElementById('metTransparency');
 
         let datasetContent = "";
         let datasetType = "";
 
-        modelSelect.addEventListener('change', () => {
-            footerEngine.textContent = `Engine: ${modelSelect.options[modelSelect.selectedIndex].text.split(' (')[0]} • Mode: Autonomous Peer Review`;
-        });
-
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
-
-            if (file.size > 3 * 1024 * 1024) {
-                alert("FILE TOO LARGE: Max 3MB for replication data.");
-                return;
-            }
 
             datasetType = file.name.split('.').pop().toUpperCase();
             const reader = new FileReader();
@@ -413,13 +483,16 @@
             reader.readAsText(file);
         });
 
-        methodText.addEventListener('input', checkReady);
+        methodInput.addEventListener('input', checkReady);
 
         function checkReady() {
-            replicateBtn.disabled = !(methodText.value.trim() && datasetContent);
+            replicateBtn.disabled = !(methodInput.value.trim() && datasetContent);
         }
 
         replicateBtn.addEventListener('click', async () => {
+            const methodology = methodInput.value.trim();
+            if (!methodology || !datasetContent) return;
+
             loadingOverlay.classList.remove('hidden');
             replicateBtn.disabled = true;
 
@@ -427,24 +500,16 @@
                 const response = await fetch('/api/generate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        methodology: methodText.value.trim(),
-                        dataset: datasetContent,
-                        dataType: datasetType,
-                        model: modelSelect.value
-                    })
+                    body: JSON.stringify({ methodology, dataset: datasetContent, dataType: datasetType })
                 });
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(errorText || "Network fail");
-                }
-
                 const data = await response.json();
+                if (data.error) throw new Error(data.error);
+
                 renderResults(data);
 
             } catch (err) {
-                alert("REPLICATION FAILURE: " + err.message);
+                alert(`ENGINE FAILURE: ${err.message}`);
                 console.error(err);
             } finally {
                 loadingOverlay.classList.add('hidden');
@@ -456,35 +521,41 @@
             placeholder.classList.add('hidden');
             results.classList.remove('hidden');
 
+            scoreVal.textContent = data.reproducibility_score;
             verdictLabel.textContent = `VERDICT: ${data.verdict.toUpperCase()}`;
-            scoreValue.textContent = data.score;
+            verdictLabel.className = `verdict-tag verdict-${data.verdict}`;
+
             summaryText.textContent = data.summary;
+
+            // Render Metrics
+            metStatistical.textContent = `${data.integrity_metrics.statistical_alignment}%`;
+            metLogical.textContent = `${data.integrity_metrics.logical_consistency}%`;
+            metAdequacy.textContent = `${data.integrity_metrics.sample_adequacy}%`;
+            metTransparency.textContent = `${data.integrity_metrics.transparency_level}%`;
 
             // Render Gaps
             gapList.innerHTML = '';
-            data.gaps.forEach(gap => {
+            data.gaps.forEach(g => {
                 const item = document.createElement('div');
                 item.className = 'gap-item';
                 item.innerHTML = `
-                    <div class="severity-dot severity-${gap.severity}"></div>
-                    <div class="gap-text">
-                        <span class="gap-cat">${gap.category}</span>
-                        ${gap.description}
-                    </div>
+                    <span class="gap-severity sev-${g.severity}">${g.severity}</span>
+                    <span class="gap-title">${g.category}</span>
+                    <div class="gap-desc">${g.desc}</div>
                 `;
                 gapList.appendChild(item);
             });
 
             // Render Findings
-            findingsTags.innerHTML = '';
-            data.findings.forEach(finding => {
-                const tag = document.createElement('div');
-                tag.className = 'finding-tag';
-                tag.textContent = finding;
-                findingsTags.appendChild(tag);
+            findingsList.innerHTML = '';
+            data.findings.forEach(f => {
+                const chip = document.createElement('div');
+                chip.className = 'finding-chip';
+                chip.textContent = f;
+                findingsList.appendChild(chip);
             });
 
-            // Scroll results into view
+            // Smooth Scroll
             results.scrollIntoView({ behavior: 'smooth' });
         }
     </script>

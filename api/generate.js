@@ -3,44 +3,51 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    const { methodology, dataset, dataType, model } = req.body;
-    const API_KEY = process.env.GEMINI_KEY;
-    const modelId = model || 'gemini-2.0-flash';
-
-    if (!API_KEY) {
-        return res.status(500).json({ error: 'Server configuration error: Missing API Key' });
-    }
-
+    const { methodology, dataset, dataType } = req.body;
     if (!methodology || !dataset) {
-        return res.status(400).json({ error: 'Both methodology and dataset are required for replication analysis' });
+        return res.status(400).json({ error: 'Methodology and Dataset are required' });
     }
+
+    const API_KEY = process.env.GEMINI_KEY;
+    if (!API_KEY) {
+        return res.status(500).json({ error: 'Missing GEMINI_KEY' });
+    }
+
+    const promptText = `Act as an Autonomous Scientific Replication Engine. Analyze the following methodology against the provided dataset snippets.
+
+    PAPER METHODOLOGY / CLAIMS:
+    "${methodology}"
+
+    DATASET SNIPPET (${dataType}):
+    "${dataset.substring(0, 15000)}"
+
+    Perform a rigorous cross-examination. Identify reproducibility gaps, statistical anomalies, or logical divergences.
+    Provide a single JSON object with:
+    {
+        "reproducibility_score": "0-100",
+        "verdict": "Confirmed / Divergent / Failed",
+        "integrity_metrics": {
+            "statistical_alignment": number,
+            "logical_consistency": number,
+            "sample_adequacy": number,
+            "transparency_level": number
+        },
+        "gaps": [
+            {"category": "Category", "severity": "High/Medium/Low", "desc": "Description of the reproducibility gap"},
+            {"category": "Category", "severity": "High/Medium/Low", "desc": "Description of the reproducibility gap"}
+        ],
+        "findings": [
+            "Specific evidence in data supporting or conflicting with claims",
+            "Specific evidence in data supporting or conflicting with claims"
+        ],
+        "summary": "Full executive peer-review summary",
+        "visual_prompt": "Futuristic laboratory workspace, scientific charts, DNA and data nodes, ultra-clean aesthetic"
+    }
+    Return ONLY JSON.`;
 
     try {
-        const promptText = `You are a Digital Peer Reviewer. Your task is to reproduce the results of a scientific paper based on its methodology and a provided dataset.
-
-METHODOLOGY/CLAIMS:
-${methodology}
-
-RAW DATASET (${dataType}):
-${dataset.substring(0, 15000)} // Truncated to stay within context limits if extremely large
-
-Analyze the data against the methodology. 
-1. Does the statistical distribution in the data support the paper's claims?
-2. Are there any "Reproducibility Gaps" (e.g., missing variables, p-hacking, insufficient sample size, or results that cannot be derived from the data)?
-3. Identify discrepancies between claimed outcomes and actual data patterns.
-
-Return ONLY a JSON object:
-{
-    "score": number (0-100),
-    "verdict": "Confirmed / Divergent / Failed",
-    "gaps": [
-        { "category": "Category", "description": "Specific gap description", "severity": "High/Medium/Low" }
-    ],
-    "findings": ["Direct evidence or conflict found in data"],
-    "summary": "High-level reproduction summary"
-}`;
-
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${API_KEY}`, {
+        // Use Gemini 1.5 Flash for stable free-tier quota
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -50,14 +57,15 @@ Return ONLY a JSON object:
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.error?.message || `Gemini API Error: ${response.status}`);
+            throw new Error(errorData.error?.message || `API Error: ${response.status}`);
         }
 
         const data = await response.json();
         const text = data.candidates[0].content.parts[0].text;
 
+        // Robust JSON extraction
         const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (!jsonMatch) throw new Error("AI failed to return valid statistical metadata.");
+        if (!jsonMatch) throw new Error("AI failed to return valid replication metadata.");
 
         res.status(200).json(JSON.parse(jsonMatch[0]));
 
